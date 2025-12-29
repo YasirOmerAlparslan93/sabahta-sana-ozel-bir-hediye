@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="tr" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sana Özel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Playfair+Display:ital,wght@0,600;1,600&display=swap" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background-color: #000; color: #fff; height: 100vh; width: 100vw;
+            overflow: hidden; display: flex; justify-content: center; align-items: center;
+            font-family: 'Playfair Display', serif;
+        }
+        #intro-container { position: absolute; z-index: 10; text-align: center; transition: opacity 1s ease-out; }
+        .magic-btn {
+            background: transparent; border: 2px solid #D4AF37; color: #D4AF37;
+            padding: 20px 40px; font-size: 1.5rem; font-family: 'Playfair Display', serif;
+            cursor: pointer; position: relative; overflow: hidden; transition: all 0.5s ease;
+            letter-spacing: 1px; border-radius: 4px; box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+        }
+        .magic-btn::before {
+            content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.4), transparent); transition: 0.5s;
+        }
+        .magic-btn:hover { background: #D4AF37; color: #000; box-shadow: 0 0 30px rgba(212, 175, 55, 0.6); transform: scale(1.05); }
+        .magic-btn:hover::before { left: 100%; }
+        
+        canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+        
+        /* تنسيق الرسالة العلوية */
+        #header-message {
+            position: absolute; 
+            z-index: 20; 
+            width: 100%; 
+            top: 5%; /* في الأعلى تماماً */
+            text-align: center; 
+            opacity: 0; 
+            transition: opacity 3s ease-in; 
+            padding: 0 20px;
+            pointer-events: none;
+        }
+        
+        .message-text {
+            font-family: 'Dancing Script', cursive; 
+            font-size: 2.5rem; 
+            line-height: 1.4; 
+            color: #fff;
+            text-shadow: 0 0 10px #ff0055, 0 0 20px #000;
+            background: linear-gradient(to bottom, #fff, #ffecec); 
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent; 
+            filter: drop-shadow(0 0 2px rgba(0,0,0,0.8));
+        }
+
+        /* تنسيق صورة البجعة */
+        #swan-container {
+            position: absolute;
+            left: 2%;
+            bottom: 5%;
+            z-index: 5; /* خلف النصوص ولكن مع الزهور */
+            opacity: 0;
+            transition: opacity 4s ease-in;
+            width: 300px;
+            max-width: 40%;
+            pointer-events: none;
+        }
+        
+        #swan-container img {
+            width: 100%;
+            height: auto;
+            /* تأثير تلاشي خفيف أسفل الصورة لدمجها مع الخلفية */
+            mask-image: linear-gradient(to bottom, black 80%, transparent 100%); 
+            -webkit-mask-image: linear-gradient(to bottom, black 80%, transparent 100%); 
+            border-radius: 20px;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+        }
+
+        @media (max-width: 768px) { 
+            .magic-btn { padding: 15px 25px; font-size: 1.1rem; } 
+            .message-text { font-size: 1.8rem; } 
+            #swan-container { width: 150px; bottom: 10%; }
+        }
+    </style>
+</head>
+<body>
+    <div id="intro-container">
+        <button class="magic-btn" onclick="startShow()">Bu senin için, Türkiye'nin Kuğusu</button>
+    </div>
+    
+    <canvas id="garden"></canvas>
+    
+    <!-- صورة البجعة -->
+    <div id="swan-container">
+        <!-- تأكد من وجود صورة باسم swan.jpg في نفس المجلد -->
+        <img src="swan.jpg" alt="Kuğum" onerror="this.style.display='none'">
+    </div>
+
+    <!-- الرسالة العلوية -->
+    <div id="header-message">
+        <h1 class="message-text">Gül ve gülümse, sabahın neşe dolsun.<br>Kuğum, senin mutluluğun benim mutluluğumdur.</h1>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('garden');
+        const ctx = canvas.getContext('2d');
+        const intro = document.getElementById('intro-container');
+        const headerMessage = document.getElementById('header-message');
+        const swanContainer = document.getElementById('swan-container');
+
+        let width, height, roses = [], isAnimating = false;
+
+        function resize() { width = canvas.width = window.innerWidth; height = canvas.height = window.innerHeight; }
+        window.addEventListener('resize', resize); resize();
+        const random = (min, max) => Math.random() * (max - min) + min;
+
+        class Stem {
+            constructor(x, y, targetHeight, curve) {
+                this.x = x; this.y = y; this.targetHeight = targetHeight; this.currentHeight = 0;
+                this.curve = curve; this.thickness = random(2, 4); this.growthSpeed = random(1.5, 3);
+                this.points = []; this.finished = false; this.leaves = [];
+                const leafCount = Math.floor(targetHeight / 60);
+                for(let i=1; i<=leafCount; i++) this.leaves.push({ yPos: (targetHeight/leafCount)*i, side: i%2===0?1:-1, size: 0, maxSize: random(10,20), angle: random(0.3,0.8) });
+            }
+            grow() {
+                if (this.currentHeight < this.targetHeight) {
+                    this.currentHeight += this.growthSpeed;
+                    this.points.push({x: this.x + Math.sin(this.currentHeight*0.01)*this.curve, y: this.y - this.currentHeight});
+                } else this.finished = true;
+            }
+            draw() {
+                if (this.points.length < 2) return;
+                ctx.beginPath(); ctx.moveTo(this.points[0].x, this.points[0].y);
+                for (let i=1; i<this.points.length; i++) ctx.lineTo(this.points[i].x, this.points[i].y);
+                ctx.strokeStyle = '#2d5a27'; ctx.lineWidth = this.thickness; ctx.lineCap = 'round'; ctx.stroke();
+                ctx.strokeStyle = '#4a8f3c'; ctx.lineWidth = this.thickness*0.4; ctx.stroke();
+                this.leaves.forEach(leaf => {
+                    if (this.currentHeight > leaf.yPos) {
+                        if(leaf.size < leaf.maxSize) leaf.size += 0.2;
+                        const idx = Math.floor(leaf.yPos/this.growthSpeed);
+                        if(idx < this.points.length) this.drawLeaf(this.points[idx].x, this.points[idx].y, leaf.side, leaf.size, leaf.angle);
+                    }
+                });
+            }
+            drawLeaf(x, y, side, size, angle) {
+                ctx.save(); ctx.translate(x, y); ctx.rotate(side*angle); ctx.beginPath();
+                ctx.ellipse(side*size, 0, size, size/2, 0, 0, Math.PI*2); ctx.fillStyle='#3a7a30'; ctx.fill();
+                ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(side*size*1.8, 0); ctx.strokeStyle='#1e3d19'; ctx.lineWidth=1; ctx.stroke(); ctx.restore();
+            }
+        }
+        class Rose {
+            constructor(stem) {
+                this.stem = stem; this.bloomSize = 0; this.maxBloomSize = random(25, 45); this.hue = random(340, 360);
+                this.petals = []; this.blooming = false;
+                for(let i=0; i<15; i++) this.petals.push({ angle: (Math.PI*2/15)*i, offset: random(0, Math.PI), scale: 0 });
+            }
+            update() { if (this.stem.finished) { this.blooming = true; if (this.bloomSize < this.maxBloomSize) this.bloomSize += 0.3; } }
+            draw() {
+                if (!this.blooming) return;
+                const top = this.stem.points[this.stem.points.length-1];
+                ctx.save(); ctx.translate(top.x, top.y);
+                this.petals.forEach(p => {
+                    if(p.scale < 1) p.scale += 0.02;
+                    ctx.save(); ctx.rotate(p.angle + p.offset);
+                    const grad = ctx.createRadialGradient(0, 0, 0, 0, 0, this.bloomSize*p.scale);
+                    grad.addColorStop(0, `hsl(${this.hue}, 90%, 30%)`); grad.addColorStop(0.6, `hsl(${this.hue}, 100%, 50%)`); grad.addColorStop(1, `hsl(${this.hue}, 100%, 70%)`);
+                    ctx.fillStyle = grad; ctx.beginPath();
+                    ctx.ellipse(0, this.bloomSize*0.5*p.scale, this.bloomSize*0.4*p.scale, this.bloomSize*0.8*p.scale, 0, 0, Math.PI*2);
+                    ctx.fill(); ctx.strokeStyle=`rgba(100,0,0,0.3)`; ctx.lineWidth=0.5; ctx.stroke(); ctx.restore();
+                });
+                ctx.beginPath(); ctx.arc(0, 0, this.bloomSize*0.2, 0, Math.PI*2); ctx.fillStyle='#4a0000'; ctx.fill(); ctx.restore();
+            }
+        }
+        function createGarden() {
+            for (let i=0; i<45; i++) { 
+                const x = random(0, width); const y = height+10;
+                // ترك مساحة فارغة في اليسار للبجعة
+                if (x < width * 0.25 && Math.random() > 0.3) continue; 
+                
+                const hFactor = Math.max(0, 1-(Math.abs(width/2-x)/(width/1.5)));
+                const stem = new Stem(x, y, random(height*0.4, height*0.75)*(0.5+hFactor*0.5), (width/2-x)*random(0.1, 0.3));
+                roses.push({stem, flower: new Rose(stem)});
+            }
+            roses.sort((a,b)=>b.stem.targetHeight - a.stem.targetHeight);
+        }
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            let done = true;
+            roses.forEach(o => { o.stem.grow(); o.stem.draw(); o.flower.update(); o.flower.draw(); if(o.flower.bloomSize < o.flower.maxBloomSize) done = false; });
+            if (!done) {
+                requestAnimationFrame(animate); 
+            } else {
+                // إظهار النص فقط عند الانتهاء (البجعة تظهر في البداية الآن)
+                headerMessage.style.opacity = '1';
+            }
+        }
+        function startShow() {
+            if (isAnimating) return; isAnimating = true;
+            intro.style.opacity = '0'; setTimeout(() => { intro.style.display = 'none'; }, 1000);
+            
+            // إظهار البجعة مباشرة عند البدء
+            swanContainer.style.opacity = '1';
+            
+            createGarden(); animate();
+        }
+    </script>
+</body>
+</html>
