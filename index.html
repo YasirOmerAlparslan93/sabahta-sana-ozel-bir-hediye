@@ -16,7 +16,7 @@
         .magic-btn {
             background: transparent; border: 2px solid #D4AF37; color: #D4AF37;
             padding: 20px 40px; font-size: 1.5rem; font-family: 'Playfair Display', serif;
-            font-weight: 600; /* خط أعرض للزر */
+            font-weight: 600;
             cursor: pointer; position: relative; overflow: hidden; transition: all 0.5s ease;
             letter-spacing: 1px; border-radius: 4px; box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
         }
@@ -29,7 +29,6 @@
         
         canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
         
-        /* تنسيق الرسالة العلوية */
         #header-message {
             position: absolute; 
             z-index: 20; 
@@ -43,21 +42,19 @@
         }
         
         .message-text {
-            /* تم تغيير الخط ليكون أكثر وضوحاً */
             font-family: 'Playfair Display', serif; 
-            font-weight: 700; /* خط عريض */
+            font-weight: 700;
             font-style: italic;
-            font-size: 1.8rem; /* تم تصغير الخط قليلاً ليتناسب مع طول النص الجديد */
+            font-size: 1.8rem; 
             line-height: 1.5; 
             color: #fff;
             text-shadow: 0 0 10px #ff0055, 0 0 20px #000;
             background: linear-gradient(to bottom, #fff, #ffecec); 
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent; 
-            filter: drop-shadow(0 0 4px rgba(0,0,0,1)); /* ظل أقوى للنص لزيادة الوضوح */
+            filter: drop-shadow(0 0 4px rgba(0,0,0,1)); 
         }
 
-        /* تنسيق صورة البجعة */
         #swan-container {
             position: absolute;
             left: 2%;
@@ -79,28 +76,180 @@
             filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
         }
 
+        #questions-trigger-btn {
+            position: absolute;
+            bottom: 30px;
+            right: 30px;
+            z-index: 30;
+            background: rgba(0, 0, 0, 0.6);
+            border: 1px solid #D4AF37;
+            color: #D4AF37;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem;
+            cursor: pointer;
+            opacity: 0;
+            transition: all 0.5s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        #questions-trigger-btn:hover {
+            background: #D4AF37;
+            color: #000;
+            transform: translateY(-3px);
+            box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+        }
+
+        #questions-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.95);
+            z-index: 100;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+            overflow-y: auto;
+        }
+
+        .questions-card {
+            background: rgba(20, 20, 20, 0.8);
+            border: 1px solid #D4AF37;
+            padding: 40px;
+            border-radius: 10px;
+            max-width: 800px;
+            width: 90%;
+            text-align: left;
+            position: relative;
+            box-shadow: 0 0 30px rgba(212, 175, 55, 0.1);
+            max-height: 90vh; /* لمنع الخروج عن الشاشة */
+            overflow-y: auto;
+        }
+
+        .questions-card h2 {
+            text-align: center;
+            color: #D4AF37;
+            margin-bottom: 30px;
+            font-size: 2rem;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            padding-bottom: 15px;
+        }
+
+        .questions-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .question-item {
+            margin-bottom: 20px;
+            border-left: 3px solid #D4AF37;
+            padding-left: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #eee;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .question-text:hover {
+            color: #D4AF37;
+        }
+
+        /* حاوية الإجابة المخفية */
+        .answer-container {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease-out;
+            margin-top: 5px;
+        }
+
+        .answer-container.active {
+            max-height: 200px; /* ارتفاع كافٍ للخانة والزر */
+        }
+
+        .answer-textarea {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #555;
+            border-radius: 5px;
+            color: #fff;
+            padding: 10px;
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 80px;
+            margin-bottom: 10px;
+        }
+
+        .answer-textarea:focus {
+            outline: none;
+            border-color: #D4AF37;
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        .send-btn {
+            background-color: #D4AF37;
+            color: #000;
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: 'Playfair Display', serif;
+            transition: background 0.3s;
+            float: right;
+        }
+
+        .send-btn:hover {
+            background-color: #fff;
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: #aaa;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-btn:hover {
+            color: #D4AF37;
+        }
+
         @media (max-width: 768px) { 
             .magic-btn { padding: 15px 25px; font-size: 1.1rem; } 
-            .message-text { font-size: 1.2rem; } /* تصغير الخط للموبايل لضمان ظهور النص كاملاً */
+            .message-text { font-size: 1.2rem; } 
             #swan-container { width: 150px; bottom: 10%; }
+            #questions-trigger-btn { bottom: 20px; right: 20px; font-size: 0.9rem; }
+            .questions-card { padding: 20px; }
+            .question-text { font-size: 1rem; }
         }
     </style>
 </head>
 <body>
     <div id="intro-container">
-        <!-- تم تعديل نص الزر -->
         <button class="magic-btn" onclick="startShow()">Bu senin için, Türkiye'nin Kuğusu...<br>Düğmeye tıkla</button>
     </div>
     
     <canvas id="garden"></canvas>
     
-    <!-- صورة البجعة -->
     <div id="swan-container">
-        <!-- تأكد من وجود صورة باسم swan.jpg في نفس المجلد -->
         <img src="swan.jpg" alt="Kuğum" onerror="this.style.display='none'">
     </div>
 
-    <!-- الرسالة العلوية -->
     <div id="header-message">
         <h1 class="message-text">
             Seninle ve tebessümünle ne mutlu bir sabah…<br>
@@ -110,12 +259,132 @@
         </h1>
     </div>
 
+    <button id="questions-trigger-btn" onclick="openQuestions()">
+        Sorular için buraya tıkla &#10024;
+    </button>
+
+    <div id="questions-overlay">
+        <div class="questions-card">
+            <button class="close-btn" onclick="closeQuestions()">&times;</button>
+            <h2>Seni Daha Yakından Tanımak İçin...</h2>
+            <ul class="questions-list">
+                <!-- السؤال الأول -->
+                <li class="question-item">
+                    <div class="question-text" onclick="toggleAnswer(1)">
+                        <strong>1.</strong> Hayatta hep denemek isteyip de henüz yapamadığın şey nedir?
+                    </div>
+                    <div class="answer-container" id="ans-box-1">
+                        <textarea id="ans-text-1" class="answer-textarea" placeholder="Cevabınızı buraya yazın..."></textarea>
+                        <button class="send-btn" onclick="sendEmail(1, 'Hayatta hep denemek isteyip de henüz yapamadığın şey nedir?')">Gönder <i style="font-style:normal">📩</i></button>
+                    </div>
+                </li>
+
+                <!-- السؤال الثاني -->
+                <li class="question-item">
+                    <div class="question-text" onclick="toggleAnswer(2)">
+                        <strong>2.</strong> Dünyada tek bir yeri ziyaret edebilseydin, neresi olurdu ve neden?
+                    </div>
+                    <div class="answer-container" id="ans-box-2">
+                        <textarea id="ans-text-2" class="answer-textarea" placeholder="Cevabınızı buraya yazın..."></textarea>
+                        <button class="send-btn" onclick="sendEmail(2, 'Dünyada tek bir yeri ziyaret edebilseydin, neresi olurdu ve neden?')">Gönder <i style="font-style:normal">📩</i></button>
+                    </div>
+                </li>
+
+                <!-- السؤال الثالث -->
+                <li class="question-item">
+                    <div class="question-text" onclick="toggleAnswer(3)">
+                        <strong>3.</strong> Yaşayan veya ölmüş biriyle akşam yemeği yiyebilseydin, bu kim olurdu ve neden?
+                    </div>
+                    <div class="answer-container" id="ans-box-3">
+                        <textarea id="ans-text-3" class="answer-textarea" placeholder="Cevabınızı buraya yazın..."></textarea>
+                        <button class="send-btn" onclick="sendEmail(3, 'Yaşayan veya ölmüş biriyle akşam yemeği yiyebilseydin, bu kim olurdu ve neden?')">Gönder <i style="font-style:normal">📩</i></button>
+                    </div>
+                </li>
+
+                <!-- السؤال الرابع -->
+                <li class="question-item">
+                    <div class="question-text" onclick="toggleAnswer(4)">
+                        <strong>4.</strong> Sevdiğin yemekleri biliyorum ama... Moralim bozukken seni en çok rahatlatan yiyecek (comfort food) nedir?
+                    </div>
+                    <div class="answer-container" id="ans-box-4">
+                        <textarea id="ans-text-4" class="answer-textarea" placeholder="Cevabınızı buraya yazın..."></textarea>
+                        <button class="send-btn" onclick="sendEmail(4, 'Moralim bozukken seni en çok rahatlatan yiyecek nedir?')">Gönder <i style="font-style:normal">📩</i></button>
+                    </div>
+                </li>
+
+                <!-- السؤال الخامس -->
+                <li class="question-item">
+                    <div class="question-text" onclick="toggleAnswer(5)">
+                        <strong>5.</strong> Uzun ve yorucu bir günün ardından nasıl dinlenmeyi seversin?
+                    </div>
+                    <div class="answer-container" id="ans-box-5">
+                        <textarea id="ans-text-5" class="answer-textarea" placeholder="Cevabınızı buraya yazın..."></textarea>
+                        <button class="send-btn" onclick="sendEmail(5, 'Uzun ve yorucu bir günün ardından nasıl dinlenmeyi seversin?')">Gönder <i style="font-style:normal">📩</i></button>
+                    </div>
+                </li>
+
+                <!-- السؤال السادس -->
+                <li class="question-item">
+                    <div class="question-text" onclick="toggleAnswer(6)">
+                        <strong>6.</strong> En sevdiğin kitap, film veya hikaye nedir? Onu senin için özel kılan ne?
+                    </div>
+                    <div class="answer-container" id="ans-box-6">
+                        <textarea id="ans-text-6" class="answer-textarea" placeholder="Cevabınızı buraya yazın..."></textarea>
+                        <button class="send-btn" onclick="sendEmail(6, 'En sevdiğin kitap, film veya hikaye nedir?')">Gönder <i style="font-style:normal">📩</i></button>
+                    </div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
     <script>
         const canvas = document.getElementById('garden');
         const ctx = canvas.getContext('2d');
         const intro = document.getElementById('intro-container');
         const headerMessage = document.getElementById('header-message');
         const swanContainer = document.getElementById('swan-container');
+        const questionsBtn = document.getElementById('questions-trigger-btn');
+        const questionsOverlay = document.getElementById('questions-overlay');
+
+        // Toggle Answer Box
+        function toggleAnswer(id) {
+            const box = document.getElementById(`ans-box-${id}`);
+            // إغلاق الخانات الأخرى (اختياري، ليبقى التصميم نظيفاً)
+            document.querySelectorAll('.answer-container').forEach(el => {
+                if(el.id !== `ans-box-${id}`) el.classList.remove('active');
+            });
+            box.classList.toggle('active');
+        }
+
+        // Send Email Function
+        function sendEmail(id, questionTitle) {
+            const answer = document.getElementById(`ans-text-${id}`).value;
+            if(!answer.trim()) {
+                alert("Lütfen önce bir cevap yazın! (Please write an answer first)");
+                return;
+            }
+            
+            const email = "yasiromeralparslan@gmail.com";
+            const subject = encodeURIComponent(`Cevap: ${questionTitle}`);
+            const body = encodeURIComponent(`Soru: ${questionTitle}\n\nCevap:\n${answer}`);
+            
+            // فتح تطبيق البريد
+            window.location.href = `mailto:${email}?subject=${subject}&body=${body}`;
+        }
+
+        function openQuestions() {
+            questionsOverlay.style.display = 'flex';
+            setTimeout(() => {
+                questionsOverlay.style.opacity = '1';
+            }, 10);
+        }
+
+        function closeQuestions() {
+            questionsOverlay.style.opacity = '0';
+            setTimeout(() => {
+                questionsOverlay.style.display = 'none';
+            }, 500);
+        }
 
         let width, height, roses = [], isAnimating = false;
 
@@ -183,9 +452,7 @@
         function createGarden() {
             for (let i=0; i<45; i++) { 
                 const x = random(0, width); const y = height+10;
-                // ترك مساحة فارغة في اليسار للبجعة
                 if (x < width * 0.25 && Math.random() > 0.3) continue; 
-                
                 const hFactor = Math.max(0, 1-(Math.abs(width/2-x)/(width/1.5)));
                 const stem = new Stem(x, y, random(height*0.4, height*0.75)*(0.5+hFactor*0.5), (width/2-x)*random(0.1, 0.3));
                 roses.push({stem, flower: new Rose(stem)});
@@ -199,17 +466,16 @@
             if (!done) {
                 requestAnimationFrame(animate); 
             } else {
-                // إظهار النص فقط عند الانتهاء (البجعة تظهر في البداية الآن)
                 headerMessage.style.opacity = '1';
+                setTimeout(() => {
+                    questionsBtn.style.opacity = '1';
+                }, 1000); 
             }
         }
         function startShow() {
             if (isAnimating) return; isAnimating = true;
             intro.style.opacity = '0'; setTimeout(() => { intro.style.display = 'none'; }, 1000);
-            
-            // إظهار البجعة مباشرة عند البدء
             swanContainer.style.opacity = '1';
-            
             createGarden(); animate();
         }
     </script>
