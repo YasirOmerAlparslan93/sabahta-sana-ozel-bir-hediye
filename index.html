@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="tr" dir="ltr">
 <head>
-    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sana Özel</title>
     <!-- استدعاء الخطوط -->
@@ -48,7 +47,7 @@
             font-family: 'Playfair Display', serif; 
             font-weight: 700; /* خط عريض */
             font-style: italic;
-            font-size: 2.2rem; 
+            font-size: 1.8rem; /* تم تصغير الخط قليلاً ليتناسب مع طول النص الجديد */
             line-height: 1.5; 
             color: #fff;
             text-shadow: 0 0 10px #ff0055, 0 0 20px #000;
@@ -82,7 +81,7 @@
 
         @media (max-width: 768px) { 
             .magic-btn { padding: 15px 25px; font-size: 1.1rem; } 
-            .message-text { font-size: 1.5rem; } 
+            .message-text { font-size: 1.2rem; } /* تصغير الخط للموبايل لضمان ظهور النص كاملاً */
             #swan-container { width: 150px; bottom: 10%; }
         }
     </style>
@@ -103,7 +102,12 @@
 
     <!-- الرسالة العلوية -->
     <div id="header-message">
-        <h1 class="message-text">Gül ve gülümse, sabahın neşe dolsun.<br>Kuğum, senin mutluluğun benim mutluluğumdur.</h1>
+        <h1 class="message-text">
+            Seninle ve tebessümünle ne mutlu bir sabah…<br>
+            Yeni yıl, Allah’ın rızası ve muhabbetiyle bir tebessümle başlasın.<br>
+            Gülümse ve çiçeklerden bile daha çok açıl,<br>
+            Senin güzelliğin baharı bile utandırır.
+        </h1>
     </div>
 
     <script>
